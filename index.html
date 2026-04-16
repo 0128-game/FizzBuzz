@@ -116,7 +116,7 @@
     }
 
     function startGame() {
-        currentNum = 1;
+        currentNum = 1; // 1からスタート
         score = 0;
         isPlaying = true;
         scoreElement.innerText = score;
@@ -124,9 +124,10 @@
         startBtn.style.display = "none";
         nextTurn();
     }
-
+    
     function nextTurn() {
-        display.innerText = currentNum　+　1;
+        // 表示と判定用の数値を一致させる
+        display.innerText = currentNum; 
         resetTimer();
     }
 
@@ -150,23 +151,22 @@
         if (!isPlaying) return;
 
         const keyPressed = e.key.toLowerCase();
+        // 表示されている currentNum をそのまま判定に使う
         const correctKey = getCorrectKey(currentNum);
 
-        // スペースキーのデフォルト挙動（スクロール）を防止
         if (e.key === " ") e.preventDefault();
 
         if (keyPressed === correctKey) {
             score++;
-            currentNum++;
+            currentNum++; // 正解したら次の数字へ
             scoreElement.innerText = score;
             nextTurn();
         } else {
-            // 間違ったキーを押した場合
             const expected = correctKey === ' ' ? 'Space' : correctKey.toUpperCase();
-            gameOver(`ミス！正解は ${expected} でした`);
+            gameOver(`ミス！ ${currentNum} の正解は ${expected} でした`);
         }
     });
-
+    
     startBtn.addEventListener('click', startGame);
 </script>
 
