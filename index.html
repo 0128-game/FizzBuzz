@@ -75,6 +75,19 @@
         }
 
         #start-btn:hover { background: #2ecc71; }
+
+        /* スライダーのスタイル */
+     .settings {
+        margin: 20px 0;
+        background: rgba(0,0,0,0.2);
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    input[type="range"] { 
+        width: 100%; 
+        cursor: pointer; 
+    }
     </style>
 </head>
 <body>
@@ -84,6 +97,11 @@
     <div class="score-board">Score: <span id="score">0</span></div>
     
     <div id="display-number">?</div>
+
+    <div class="settings">
+        <label>制限時間: <span id="time-val">1.0</span>秒</label><br>
+        <input type="range" id="time-slider" min="0.2" max="3.0" step="0.1" value="1.0">
+    </div>
     
     <div id="message"></div>
     <button id="start-btn">ゲームスタート</button>
@@ -107,6 +125,13 @@
     const scoreElement = document.getElementById('score');
     const message = document.getElementById('message');
     const startBtn = document.getElementById('start-btn');
+    const slider = document.getElementById('time-slider');
+    const timeValLabel = document.getElementById('time-val');
+
+// スライダーを動かした時に数値を表示
+slider.addEventListener('input', () => {
+    timeValLabel.innerText = slider.value;
+});
 
     function getCorrectKey(num) {
         if (num % 15 === 0) return 'g';
@@ -122,6 +147,7 @@
         scoreElement.innerText = score;
         message.innerText = "";
         startBtn.style.display = "none";
+        slider.disabled = true; // プレイ中は操作不可にする
         nextTurn();
     }
     
@@ -133,10 +159,12 @@
 
     function resetTimer() {
         clearTimeout(timer);
+        // スライダーの値(秒)をミリ秒に変換してセット
+        const limit = parseFloat(slider.value) * 1000; 
         timer = setTimeout(() => {
-            gameOver("時間切れ！遅すぎます！");
-        }, TIME_LIMIT);
-    }
+        gameOver("時間切れ！遅すぎます！");
+    }, limit);
+}
 
     function gameOver(msg) {
         isPlaying = false;
@@ -144,6 +172,7 @@
         message.innerText = msg;
         display.innerText = "×";
         startBtn.style.display = "inline-block";
+        slider.disabled = false; // 終了後に変更可能にする
         startBtn.innerText = "もう一度プレイ";
     }
 
