@@ -206,7 +206,9 @@ function resetTimer() {
     }function gameOver(msg) {
     isPlaying = false;
     clearTimeout(timer);
-    
+    timerBar.style.transition = 'none';
+    timerBar.style.width = '0%';
+        
     // ハイスコア判定と保存
     if (score > highScore) {
         highScore = score;
@@ -214,8 +216,7 @@ function resetTimer() {
         highScoreElement.innerText = highScore;
         msg += " 🎉ハイスコア更新！";
 
-    timerBar.style.transition = 'none';
-    timerBar.style.width = '0%';
+
     }
 
     message.innerText = msg;
