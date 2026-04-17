@@ -88,6 +88,13 @@
         width: 100%; 
         cursor: pointer; 
     }
+
+    #timer-bar {
+    width: 100%;
+    height: 100%;
+    background-color: #e74c3c;
+    /* transitionの設定が重要： linearにすることでスムーズに減少します */
+}
     </style>
 </head>
 <body>
@@ -98,6 +105,9 @@
     Score: <span id="score">0</span> | 
     Best: <span id="high-score">0</span>
 </div>    
+    <div id="timer-container" style="width: 100%; height: 10px; background: #2c3e50; border-radius: 5px; margin-bottom: 10px; overflow: hidden;">
+    <div id="timer-bar" style="width: 100%; height: 100%; background: #e74c3c; transition: width linear;"></div>
+</div>
     <div id="display-number">?</div>
 
     <div class="settings">
@@ -130,6 +140,7 @@
     const slider = document.getElementById('time-slider');
     const timeValLabel = document.getElementById('time-val');
     const highScoreElement = document.getElementById('high-score');
+    const timerBar = document.getElementById('timer-bar');
 
 // 起動時に保存されたスコアを読み込む
 let highScore = localStorage.getItem('fizzbuzz-highscore') || 0;
@@ -164,11 +175,22 @@ slider.addEventListener('input', () => {
         resetTimer();
     }
 
-    function resetTimer() {
-        clearTimeout(timer);
-        // スライダーの値(秒)をミリ秒に変換してセット
-        const limit = parseFloat(slider.value) * 1000; 
-        timer = setTimeout(() => {
+function resetTimer() {
+    clearTimeout(timer);
+    const limit = parseFloat(slider.value) * 1000;
+
+    // バーのリセット（アニメーションを一時無効にして100%に戻す）
+    timerBar.style.transition = 'none';
+    timerBar.style.width = '100%';
+
+    // 強制的に再描画させてからアニメーションを開始
+    timerBar.offsetHeight; 
+
+    // バーを0%に向けて動かす
+    timerBar.style.transition = `width ${limit}ms linear`;
+    timerBar.style.width = '0%';
+
+    timer = setTimeout(() => {
         gameOver("時間切れ！遅すぎます！");
     }, limit);
 }
@@ -191,6 +213,9 @@ slider.addEventListener('input', () => {
         localStorage.setItem('fizzbuzz-highscore', highScore);
         highScoreElement.innerText = highScore;
         msg += " 🎉ハイスコア更新！";
+
+    timerBar.style.transition = 'none';
+    timerBar.style.width = '0%';
     }
 
     message.innerText = msg;
