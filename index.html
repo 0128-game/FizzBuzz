@@ -94,8 +94,10 @@
 
 <div id="game-container">
     <h1>FizzBuzz Challenge</h1>
-    <div class="score-board">Score: <span id="score">0</span></div>
-    
+<div class="score-board">
+    Score: <span id="score">0</span> | 
+    Best: <span id="high-score">0</span>
+</div>    
     <div id="display-number">?</div>
 
     <div class="settings">
@@ -127,6 +129,11 @@
     const startBtn = document.getElementById('start-btn');
     const slider = document.getElementById('time-slider');
     const timeValLabel = document.getElementById('time-val');
+    const highScoreElement = document.getElementById('high-score');
+
+// 起動時に保存されたスコアを読み込む
+let highScore = localStorage.getItem('fizzbuzz-highscore') || 0;
+highScoreElement.innerText = highScore;
 
 // スライダーを動かした時に数値を表示
 slider.addEventListener('input', () => {
@@ -174,7 +181,24 @@ slider.addEventListener('input', () => {
         startBtn.style.display = "inline-block";
         slider.disabled = false; // 終了後に変更可能にする
         startBtn.innerText = "もう一度プレイ";
+    }function gameOver(msg) {
+    isPlaying = false;
+    clearTimeout(timer);
+    
+    // ハイスコア判定と保存
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('fizzbuzz-highscore', highScore);
+        highScoreElement.innerText = highScore;
+        msg += " 🎉ハイスコア更新！";
     }
+
+    message.innerText = msg;
+    display.innerText = "×";
+    startBtn.style.display = "inline-block";
+    startBtn.innerText = "もう一度プレイ";
+    slider.disabled = false;
+}
 
     window.addEventListener('keydown', (e) => {
         if (!isPlaying) return;
